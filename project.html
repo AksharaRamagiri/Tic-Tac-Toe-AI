@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game Theory & AI: Tic-Tac-Toe Case Study</title>
+  <link rel="stylesheet" href="project.css" />
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar">
+  <div class="navbar-brand">🎮 TicTacToe AI</div>
+  <div class="navbar-menu">
+    <div id="auth-buttons">
+      <span class="navbar-btn" onclick="openLoginModal()">Log In</span>
+      <span class="navbar-btn" onclick="openSignupModal()">Sign Up</span>
+    </div>
+    <div id="user-info" class="navbar-user" style="display: none;">
+      <span class="user-email" id="user-email"></span>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Login Modal -->
+<div id="login-modal" class="modal-overlay">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModals()">&times;</button>
+    <h2>🔐 Log In</h2>
+    <div class="error-message" id="login-error"></div>
+    <form onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="login-email" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-password" required>
+      </div>
+      <button type="submit" class="btn-auth">Log In</button>
+    </form>
+    <div class="auth-switch">
+      Don't have an account? <a onclick="switchToSignup()">Sign Up</a>
+    </div>
+  </div>
+</div>
+
+<!-- Signup Modal -->
+<div id="signup-modal" class="modal-overlay">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModals()">&times;</button>
+    <h2>📝 Sign Up</h2>
+    <div class="error-message" id="signup-error"></div>
+    <form onsubmit="handleSignup(event)">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="signup-name" required>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="signup-email" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="signup-password" required minlength="6">
+      </div>
+      <button type="submit" class="btn-auth">Create Account</button>
+    </form>
+    <div class="auth-switch">
+      Already have an account? <a onclick="switchToLogin()">Log In</a>
+    </div>
+  </div>
+</div>
+
+<!-- Game Page (Always Visible) -->
+<div class="game-container">
+  <div class="container">
+    
+    <!-- Guest Banner (shown when not logged in) -->
+    <div id="guest-banner" class="guest-banner">
+      ℹ️ Playing as guest. <a onclick="openLoginModal()">Log in</a> to save your stats!
+    </div>
+    
+    <header>
+      <h1>🎮 Game Theory & Artificial Intelligence</h1>
+      <p>Interactive Tic-Tac-Toe: A Study in Decision-Making Algorithms</p>
+      <!-- <p style="font-size: 0.9em; margin-top: 5px;">Youngstown State University - Theory & Information Systems</p> -->
+    </header>
+
+    <!-- TOP ROW: 3 CARDS -->
+    <div class="main-content">
+      <!-- LEFT: Game Interface -->
+      <div class="card game-section">
+        <h2 style="color: #667eea; margin-bottom: 20px;">Game Interface</h2>
+        
+        <div class="controls">
+          <div class="control-group">
+            <label>🤖 AI Difficulty:</label>
+            <select id="difficulty">
+              <option value="easy">Easy (Random)</option>
+              <option value="medium" selected>Medium (Heuristic)</option>
+              <option value="hard">Hard (Minimax)</option>
+            </select>
+          </div>
+          
+          <div class="control-group">
+            <label>🎲 Bot plays first:</label>
+            <input type="checkbox" id="bot-first">
+          </div>
+        </div>
+
+        <div class="game-board" id="game-board">
+          <button class="box" data-index="0"></button>
+          <button class="box" data-index="1"></button>
+          <button class="box" data-index="2"></button>
+          <button class="box" data-index="3"></button>
+          <button class="box" data-index="4"></button>
+          <button class="box" data-index="5"></button>
+          <button class="box" data-index="6"></button>
+          <button class="box" data-index="7"></button>
+          <button class="box" data-index="8"></button>
+        </div>
+
+        <div class="msg-container hide" id="msg-container">
+          <p id="msg"></p>
+        </div>
+
+        <div class="buttons">
+          <button class="btn-primary" id="new-btn">🆕 New Game</button>
+          <button class="btn-secondary" id="reset-btn">🔄 Reset</button>
+          <button class="btn-danger" id="reset-stats">📊 Reset Stats</button>
+        </div>
+      </div>
+
+      <!-- MIDDLE: AI Decision Process -->
+      <div class="card ai-visualization">
+        <h2>🧠 AI Decision Process</h2>
+        
+        <div class="thinking-indicator" id="thinking">
+          ⚡ AI is analyzing possible moves...
+        </div>
+
+        <div class="algorithm-info" id="algorithm-info">
+          <h3>Current Algorithm: Medium (Heuristic)</h3>
+          <p style="font-size: 0.9em; color: #666;">
+            The AI uses strategic heuristics: prioritizes winning moves, blocks opponent threats, and prefers center/corner positions.
+          </p>
+        </div>
+
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Decision Time</div>
+            <div class="metric-value" id="decision-time">0ms</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Nodes Evaluated</div>
+            <div class="metric-value" id="nodes-evaluated">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Current Depth</div>
+            <div class="metric-value" id="search-depth">N/A</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Best Score</div>
+            <div class="metric-value" id="best-score">N/A</div>
+          </div>
+        </div>
+
+        <div class="move-history">
+          <h3 style="color: #667eea; margin-bottom: 10px;">📝 Move History</h3>
+          <div id="move-list"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Analytics -->
+      <div class="card stats-section">
+        <h2>📊 Analytics</h2>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Games Played</div>
+            <div class="stat-value" id="games-played">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Player Wins</div>
+            <div class="stat-value" id="player-wins" style="color: #667eea;">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Bot Wins</div>
+            <div class="stat-value" id="bot-wins" style="color: #e74c3c;">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Draws</div>
+            <div class="stat-value" id="draws" style="color: #95a5a6;">0</div>
+          </div>
+          <div class="stat-card" style="grid-column: 1 / -1;">
+            <div class="stat-label">Player Win Rate</div>
+            <div class="stat-value" id="win-rate" style="color: #27ae60;">0%</div>
+          </div>
+        </div>
+      </div>
+    </div> <!-- end main-content -->
+
+    <!-- BOTTOM: FULL-WIDTH Recent Games -->
+    <div class="card full-width-history">
+      <h2 style="color: #667eea;">📝 Recent Games</h2>
+      <div class="history-table-wrapper">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Result</th>
+              <th>Difficulty</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <footer>
+      <p><strong>Youngstown State University</strong></p>
+      <p style="margin-top: 10px; font-size: 0.9em;">Demonstrating Game Theory, AI Algorithms, and Decision Systems</p>
+    </footer>
+  </div>
+</div>
+
+<!-- Main Script (Firebase + Game + AI) -->
+<script type="module" src="project.js"></script>
+</body>
+</html>
