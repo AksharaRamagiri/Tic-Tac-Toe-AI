@@ -16,13 +16,13 @@ import {
 
 // 🔐 Your Firebase config (REPLACE with your real one)
 const firebaseConfig = {
-  apiKey: "AIzaSyD1uoswNOxGO2U2DJB0fLU0PmX0oCHLVUY",
-  authDomain: "tic-tac-toe-901ba.firebaseapp.com",
-  projectId: "tic-tac-toe-901ba",
-  storageBucket: "tic-tac-toe-901ba.firebasestorage.app",
-  messagingSenderId: "179273420202",
-  appId: "1:179273420202:web:bc610212c971849b2a6fd3",
-  measurementId: "G-XK20QSQCMW"
+  apiKey: "AIzaSyBiv6EFieKXT-hglFtSnnXJha9XQomfra4",
+  authDomain: "tic-tac-toe-ai-7025c.firebaseapp.com",
+  projectId: "tic-tac-toe-ai-7025c",
+  storageBucket: "tic-tac-toe-ai-7025c.firebasestorage.app",
+  messagingSenderId: "613128840966",
+  appId: "1:613128840966:web:b4e7c729b3ba3c3692e087",
+  measurementId: "G-ZN05PMCLQV"
 };
 
 
